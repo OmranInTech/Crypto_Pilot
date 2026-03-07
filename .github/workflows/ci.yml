@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build Docker images
+        run: docker compose build
