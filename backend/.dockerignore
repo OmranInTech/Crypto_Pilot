@@ -1,0 +1,39 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Environment variables (secrets)
+.env
+.env.*
+
+# Git
+.git
+.gitignore
+
+# Docker files (not needed inside container)
+Dockerfile
+docker-compose.yml
+
+# Logs
+*.log
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test cache
+.pytest_cache/
+
+# Database (if using sqlite locally)
+db.sqlite3
