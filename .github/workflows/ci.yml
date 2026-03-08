@@ -1,13 +1,11 @@
 name: CI
 
-# Trigger workflow on push to main or develop branches
 on:
   push:
     branches: [main, develop]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -19,33 +17,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js for frontend or Python for backend
-      - name: Set up environment
-        uses: actions/setup-node@v3
+      # Step 2: Set up environment
+      - name: Set up Node.js for frontend
         if: matrix.service == 'frontend'
+        uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Python for backend
         if: matrix.service == 'backend'
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: 3.12   # <-- Updated Python version
 
       # Step 3: Install dependencies
       - name: Install dependencies
         run: |
           if [ "${{ matrix.service }}" == "frontend" ]; then
-            cd frontend && npm install;
+            cd frontend && npm install
           else
-            cd backend && python -m pip install --upgrade pip && pip install -r requirements.txt;
+            cd backend && python -m pip install --upgrade pip && pip install -r requirements.txt
           fi
 
-      # Step 4: Run tests (optional)
+      # Step 4: Run tests
       - name: Run tests
         run: |
           if [ "${{ matrix.service }}" == "frontend" ]; then
-            cd frontend && npm test -- --watchAll=false;
+            cd frontend && npm test -- --watchAll=false
           else
-            cd backend && python manage.py test;
+            cd backend && python manage.py test
           fi
