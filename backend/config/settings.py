@@ -65,8 +65,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database - for now keep SQLite (we will add PostgreSQL next)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'cryptopilot',        # your database
+        'USER': 'cryptouser',         # new user
+        'PASSWORD': 'imrankhan123$$', # user password
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
