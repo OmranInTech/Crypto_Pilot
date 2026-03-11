@@ -25,27 +25,19 @@ const Navbar: React.FC<NavbarProps> = ({ isMobileMenuOpen, onMobileMenuToggle })
       }`}
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center px-4 sm:px-6 lg:px-8">
+
         {/* Mobile menu toggle */}
         <button
           type="button"
           onClick={onMobileMenuToggle}
-          className="mr-3 inline-flex items-center justify-center rounded-lg bg-white/20 p-2 text-orange-600 transition hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 md:hidden"
+          className="inline-flex items-center justify-center rounded-lg bg-white/20 p-2 text-orange-600 transition hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 md:hidden"
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
         >
           {isMobileMenuOpen ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
         </button>
 
-        {/* Brand */}
-        <div className="flex items-center gap-2">
-          <span className="text-2xl leading-none" aria-hidden="true">
-            🎩
-          </span>
-          <span className="text-lg font-semibold tracking-tight text-slate-900 drop-shadow-sm">
-            Crypto Pilot
-          </span>
-        </div>
-
-        <div className="ml-auto flex items-center gap-5 pr-4">
+        {/* Right side icons */}
+        <div className="ml-300 flex items-center gap-5 pr-4">
           <div className="relative">
             <FaUserCircle className={iconClasses} onClick={() => setUserMenuOpen((open) => !open)} />
 
