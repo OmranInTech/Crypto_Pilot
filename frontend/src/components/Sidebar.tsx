@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   FaHome,
   FaChartLine,
@@ -16,14 +16,12 @@ type SidebarProps = {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => {
   const [mounted, setMounted] = useState(false);
-  const location = useLocation();
 
   useEffect(() => {
     const timer = window.setTimeout(() => setMounted(true), 120);
     return () => window.clearTimeout(timer);
   }, []);
 
-  // Main menu items (without Settings)
   const menuItems = [
     { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
     { name: "Trending Coins", icon: <FaChartLine />, path: "/trending-coins" },
@@ -35,13 +33,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => {
   const sidebarStateClasses =
     isOpen || mounted ? "translate-x-0" : "-translate-x-full";
 
-  const isActive = (path: string) => location.pathname === path;
-
   return (
     <>
       {/* Mobile overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-0 z-40 bg-black/30 transition-opacity duration-300 md:hidden ${
           isOpen ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
         onClick={onClose}
@@ -49,60 +45,61 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col justify-between overflow-hidden bg-gradient-to-b from-orange-500 via-orange-600 to-orange-700 text-white shadow-2xl transition-transform duration-300 ease-out md:translate-x-0 ${sidebarStateClasses}`}
+        className={`fixed inset-y-0 left-0 z-50 flex w-24 flex-col justify-between bg-white border-r border-gray-200 transition-transform duration-300 md:translate-x-0 ${sidebarStateClasses}`}
       >
+        {/* Top section */}
         <div>
           {/* Logo */}
-          <div className="flex items-center gap-3 px-5 py-4">
-            <span className="text-2xl">🎩</span>
-            <span className="text-lg font-semibold tracking-tight">
-              Crypto Pilot
-            </span>
+          <div className="flex flex-col items-center py-6 border-b border-gray-200">
+            <div className="w-10 h-10 rounded-md bg-[#4F6EF7] flex items-center justify-center text-white font-bold">
+              CP
+            </div>
           </div>
 
-          {/* Main Menu */}
-          <nav className="mt-4 px-2">
-            <ul className="space-y-2">
-              {menuItems.map((item) => (
-                <li key={item.name}>
-                  <NavLink
-                    to={item.path}
-                    onClick={onClose}
-                    className={({ isActive }) =>
-                      `group flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-all duration-200 ${
-                        isActive
-                          ? "bg-white/20 shadow-lg text-white"
-                          : "text-white/90 hover:bg-white/10 hover:text-white"
-                      }`
-                    }
-                  >
-                    <span className="text-lg">{item.icon}</span>
-                    <span className="truncate">{item.name}</span>
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
+          {/* Menu */}
+          <nav className="mt-4 flex flex-col items-center gap-3">
+            {menuItems.map((item) => (
+              <NavLink
+                key={item.name}
+                to={item.path}
+                onClick={onClose}
+                className={({ isActive }) =>
+                  `flex flex-col items-center justify-center w-16 h-16 rounded-xl text-xs transition
+                  ${
+                    isActive
+                      ? "bg-[#EEF2FF] text-[#4F6EF7]"
+                      : "text-gray-500 hover:bg-gray-100"
+                  }`
+                }
+              >
+                <span className="text-lg mb-1">{item.icon}</span>
+                <span className="text-[10px] text-center leading-tight">
+                  {item.name}
+                </span>
+              </NavLink>
+            ))}
           </nav>
         </div>
 
-        {/* Bottom: Settings + Version */}
-        <div className="px-4 pb-6">
+        {/* Bottom section */}
+        <div className="flex flex-col items-center pb-6 gap-3">
           <NavLink
             to="/settings"
             onClick={onClose}
             className={({ isActive }) =>
-              `flex items-center gap-3 rounded-xl bg-white/10 px-4 py-3 text-sm transition duration-200 ${
+              `flex flex-col items-center justify-center w-16 h-16 rounded-xl text-xs transition
+              ${
                 isActive
-                  ? "bg-white/20 shadow-lg text-white"
-                  : "text-white/90 hover:bg-white/10 hover:text-white"
+                  ? "bg-[#EEF2FF] text-[#4F6EF7]"
+                  : "text-gray-500 hover:bg-gray-100"
               }`
             }
           >
-            <FaCogs className="text-lg" />
-            <span>Settings</span>
+            <FaCogs className="text-lg mb-1" />
+            <span className="text-[10px]">Settings</span>
           </NavLink>
 
-          <div className="mt-3 text-xs text-white/80">v1.0.0</div>
+          <div className="text-[9px] text-gray-400">v1.0.0</div>
         </div>
       </aside>
     </>

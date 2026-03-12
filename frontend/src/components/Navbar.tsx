@@ -1,14 +1,23 @@
 import { useState, useEffect } from "react";
 import { FaUserCircle, FaBell, FaCog, FaBars, FaTimes } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 type NavbarProps = {
   isMobileMenuOpen?: boolean;
   onMobileMenuToggle?: () => void;
 };
 
-const Navbar: React.FC<NavbarProps> = ({ isMobileMenuOpen, onMobileMenuToggle }) => {
+const Navbar: React.FC<NavbarProps> = ({
+  isMobileMenuOpen,
+  onMobileMenuToggle,
+}) => {
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
   const [mounted, setMounted] = useState<boolean>(false);
+
+  const navigate = useNavigate();
+
+  // Simulate login status
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setMounted(true), 120);
@@ -16,47 +25,110 @@ const Navbar: React.FC<NavbarProps> = ({ isMobileMenuOpen, onMobileMenuToggle })
   }, []);
 
   const iconClasses =
-    "text-2xl sm:text-3xl cursor-pointer transition-transform duration-200 ease-out hover:scale-110 hover:text-orange-600";
+    "text-xl text-gray-500 cursor-pointer transition hover:text-[#4F6EF7]";
+
+  // User menu actions
+  const handleProfile = () => {
+    setUserMenuOpen(false);
+    navigate("/settings");
+  };
+  const handleSettings = () => {
+    setUserMenuOpen(false);
+    navigate("/settings");
+  };
+  const handleSignIn = () => {
+    setUserMenuOpen(false);
+    navigate("/signin");
+  };
+  const handleSignUp = () => {
+    setUserMenuOpen(false);
+    navigate("/signup");
+  };
+  const handleLogout = () => {
+    setUserMenuOpen(false);
+    setLoggedIn(false);
+    alert("Logged out!");
+    navigate("/signin");
+  };
+
+  const handleLoginSimulation = () => setLoggedIn(true); // just for demo
 
   return (
     <nav
-      className={`fixed inset-x-0 top-0 z-50 border-b border-white/15 bg-white/70 backdrop-blur-md shadow-sm transition-transform duration-500 ${
+      className={`fixed inset-x-0 top-0 z-50 bg-white border-b border-gray-200 shadow-sm transition-transform duration-500 ${
         mounted ? "translate-y-0" : "-translate-y-14"
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-6xl items-center px-4 sm:px-6 lg:px-8">
-
-        {/* Mobile menu toggle */}
+      <div className="flex h-16 items-center px-6">
+        {/* Mobile Menu Button */}
         <button
           type="button"
           onClick={onMobileMenuToggle}
-          className="inline-flex items-center justify-center rounded-lg bg-white/20 p-2 text-orange-600 transition hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 md:hidden"
+          className="md:hidden mr-4 text-gray-600 hover:text-[#4F6EF7]"
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
         >
-          {isMobileMenuOpen ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
+          {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
         </button>
 
-        {/* Right side icons */}
-        <div className="ml-300 flex items-center gap-5 pr-4">
+        {/* Right Side */}
+        <div className="ml-auto flex items-center gap-6">
+          {/* Notification */}
+          <FaBell className={iconClasses} />
+
+          {/* Settings */}
+          <FaCog className={iconClasses} onClick={handleSettings} />
+
+          {/* User Menu */}
           <div className="relative">
-            <FaUserCircle className={iconClasses} onClick={() => setUserMenuOpen((open) => !open)} />
+            <FaUserCircle
+              className="text-2xl text-gray-500 cursor-pointer hover:text-[#4F6EF7]"
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+            />
 
             {userMenuOpen && (
-              <div className="absolute right-0 mt-2 w-44 rounded-2xl bg-white/95 p-1 shadow-xl ring-1 ring-slate-200 backdrop-blur-sm">
-                <ul className="flex flex-col text-slate-800">
-                  <li className="rounded-xl px-4 py-2 text-sm hover:bg-orange-100 hover:text-orange-800 cursor-pointer transition">
-                    Login
-                  </li>
-                  <li className="rounded-xl px-4 py-2 text-sm hover:bg-orange-100 hover:text-orange-800 cursor-pointer transition">
-                    Logout
-                  </li>
+              <div className="absolute right-0 mt-3 w-44 bg-white border border-gray-200 rounded-lg shadow-md">
+                <ul className="text-sm text-gray-700">
+                  {loggedIn ? (
+                    <>
+                      <li
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={handleProfile}
+                      >
+                        Profile
+                      </li>
+                      <li
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={handleLogout}
+                      >
+                        Logout
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={handleSignIn}
+                      >
+                        Sign In
+                      </li>
+                      <li
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={handleSignUp}
+                      >
+                        Sign Up
+                      </li>
+                      <li
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-green-600"
+                        onClick={handleLoginSimulation}
+                      >
+                        Demo Login
+                      </li>
+                    </>
+                  )}
                 </ul>
               </div>
             )}
           </div>
-
-          <FaBell className={iconClasses} />
-          <FaCog className={iconClasses} />
         </div>
       </div>
     </nav>
