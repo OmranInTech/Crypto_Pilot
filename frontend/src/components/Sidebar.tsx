@@ -37,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => {
     <>
       {/* Mobile overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-black/30 transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-0 z-140 bg-black/30 transition-opacity duration-300 md:hidden ${
           isOpen ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
         onClick={onClose}

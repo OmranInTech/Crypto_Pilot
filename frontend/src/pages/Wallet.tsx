@@ -1,4 +1,14 @@
 import { FaBitcoin, FaEthereum, FaPlus, FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { motion } from "framer-motion";
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 16 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, delay: 0.1 + i * 0.05, ease: "easeOut" },
+  }),
+};
 
 function Wallet() {
   const walletSummary = [
@@ -15,65 +25,76 @@ function Wallet() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F3F6F9] p-6 space-y-6">
-
+    <div className="mt-1 space-y-6">
       {/* Page Title */}
-      <div className="animate-slideUp" style={{ animationDelay: "0.1s" }}>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        custom={0}
+      >
         <h1 className="text-2xl font-bold text-gray-800">Wallet</h1>
         <p className="text-gray-500">
-          Manage your cryptocurrency wallet here. View your balances, transaction history, and manage your assets securely.
+          Manage your cryptocurrency wallet here. View your balances,
+          transaction history, and manage your assets securely.
         </p>
-      </div>
+      </motion.div>
 
       {/* Wallet Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <motion.div
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        custom={1}
+      >
         {walletSummary.map((item, idx) => (
-          <div
+          <motion.div
             key={idx}
-            className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:-translate-y-0.5 transition transform animate-slideUp"
-            style={{ animationDelay: `${0.2 + idx * 0.1}s` }}
+            whileHover={{ y: -4 }}
+            className="transform rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition"
           >
             <div className="flex items-center justify-between">
-              <div className="text-gray-800 font-semibold">{item.name}</div>
-              <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#EEF2FF]">
+              <div className="font-semibold text-gray-800">{item.name}</div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#EEF2FF]">
                 {item.icon}
               </div>
             </div>
-            <h2 className="text-xl font-bold mt-2">{item.amount}</h2>
-          </div>
+            <h2 className="mt-2 text-xl font-bold">{item.amount}</h2>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {/* Recent Transactions */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition transform animate-slideUp" style={{ animationDelay: "0.5s" }}>
-        <h2 className="text-lg font-semibold mb-4">Recent Transactions</h2>
+      <motion.div
+        className="transform rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition"
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        custom={2}
+      >
+        <h2 className="mb-4 text-lg font-semibold">Recent Transactions</h2>
         <ul className="divide-y divide-gray-200">
           {transactions.map((tx) => (
-            <li key={tx.id} className="flex justify-between items-center py-2">
+            <li
+              key={tx.id}
+              className="flex items-center justify-between py-2 text-sm"
+            >
               <div className="flex items-center gap-2">
                 {tx.direction === "in" ? (
                   <FaArrowDown className="text-green-500" />
                 ) : (
                   <FaArrowUp className="text-red-500" />
                 )}
-                <span className="font-medium">{tx.type} {tx.amount} {tx.coin}</span>
+                <span className="font-medium">
+                  {tx.type} {tx.amount} {tx.coin}
+                </span>
               </div>
-              <span className="text-gray-400 text-sm">{tx.time}</span>
+              <span className="text-sm text-gray-400">{tx.time}</span>
             </li>
           ))}
         </ul>
-      </div>
-
-      {/* Tailwind Slide Up Animation */}
-      <style>{`
-        @keyframes slideUp {
-          0% { opacity: 0; transform: translateY(20px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        .animate-slideUp {
-          animation: slideUp 0.6s ease forwards;
-        }
-      `}</style>
+      </motion.div>
     </div>
   );
 }

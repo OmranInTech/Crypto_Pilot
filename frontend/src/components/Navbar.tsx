@@ -55,11 +55,11 @@ const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <nav
-      className={`fixed inset-x-0 top-0 z-50 bg-white border-b border-gray-200 shadow-sm transition-transform duration-500 ${
+      className={`fixed inset-x-0 top-0 z-40 bg-white border-b border-gray-200 shadow-sm transition-transform duration-500 ${
         mounted ? "translate-y-0" : "-translate-y-14"
       }`}
     >
-      <div className="flex h-16 items-center px-6">
+      <div className="flex h-16 items-center pl-6 pr-6 md:pl-28">
         {/* Mobile Menu Button */}
         <button
           type="button"

@@ -1,4 +1,5 @@
 import { useState, FormEvent, ChangeEvent } from "react";
+import { motion } from "framer-motion";
 
 interface SignUpForm {
   name: string;
@@ -7,7 +8,11 @@ interface SignUpForm {
 }
 
 const SignUp: React.FC = () => {
-  const [form, setForm] = useState<SignUpForm>({ name: "", email: "", password: "" });
+  const [form, setForm] = useState<SignUpForm>({
+    name: "",
+    email: "",
+    password: "",
+  });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -21,65 +26,78 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F3F6F9] flex items-center justify-center p-6">
-      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md animate-slideUp">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Sign Up</h1>
+    <div className="flex min-h-screen items-center justify-center bg-[#F3F6F9] p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="w-full max-w-md rounded-2xl bg-white p-8 shadow-md"
+      >
+        <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">
+          Sign Up
+        </h1>
 
         <form onSubmit={handleSignUp} className="space-y-4">
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Full Name</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Full Name
+            </label>
             <input
               type="text"
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Email</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Email
+            </label>
             <input
               type="email"
               name="email"
               value={form.email}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Password</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Password
+            </label>
             <input
               type="password"
               name="password"
               value={form.password}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-[#4F6EF7] hover:bg-blue-600 text-white py-3 rounded-lg font-semibold transition"
+            className="w-full rounded-lg bg-[#4F6EF7] py-3 text-sm font-semibold text-white transition hover:bg-blue-600"
           >
             Create Account
           </button>
         </form>
 
-        <p className="mt-4 text-center text-gray-500 text-sm">
+        <p className="mt-4 text-center text-sm text-gray-500">
           Already have an account?{" "}
-          <a href="/signin" className="text-blue-500 font-medium hover:underline">Sign In</a>
+          <a
+            href="/signin"
+            className="font-medium text-blue-500 hover:underline"
+          >
+            Sign In
+          </a>
         </p>
-      </div>
-
-      <style>{`
-        @keyframes slideUp { 0% { opacity:0; transform: translateY(20px);} 100%{opacity:1; transform:translateY(0);} }
-        .animate-slideUp { animation: slideUp 0.6s ease forwards; }
-      `}</style>
+      </motion.div>
     </div>
   );
 };
