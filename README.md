@@ -5,7 +5,7 @@ Track your assets, analyze crypto trends, and automate trading strategies with a
 
 ---
 
-## 😲 Tech Stack
+##  Tech Stack
 
 ### Frontend
 - ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white)
