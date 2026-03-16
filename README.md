@@ -34,7 +34,7 @@ Track your assets, analyze crypto trends, and automate trading strategies with a
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ### Frontend
 ```
