@@ -1,4 +1,4 @@
-# CryptoPilot 🚀
+# CryptoPilot 
 
 A modern, full-stack cryptocurrency trading and analytics platform.  
 Track your assets, analyze crypto trends, and automate trading strategies with a sleek UI and powerful backend.
