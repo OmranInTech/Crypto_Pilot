@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Line, Bar } from "react-chartjs-2";
 import { motion } from "framer-motion";
 import {
@@ -27,29 +27,30 @@ const fadeInUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.45 } },
 };
 
+const COINS = [
+  "BTC",
+  "ETH",
+  "SOL",
+  "DOGE",
+  "BNB",
+  "ADA",
+  "XRP",
+  "LTC",
+  "DOT",
+  "UNI",
+  "LINK",
+  "AVAX",
+  "MATIC",
+  "ATOM",
+  "TRX",
+  "EOS",
+  "FTM",
+  "ALGO",
+  "VET",
+  "ICP",
+];
+
 function AutoTrader() {
-  const coins = [
-    "BTC",
-    "ETH",
-    "SOL",
-    "DOGE",
-    "BNB",
-    "ADA",
-    "XRP",
-    "LTC",
-    "DOT",
-    "UNI",
-    "LINK",
-    "AVAX",
-    "MATIC",
-    "ATOM",
-    "TRX",
-    "EOS",
-    "FTM",
-    "ALGO",
-    "VET",
-    "ICP",
-  ];
   const [selectedCoin, setSelectedCoin] = useState("BTC");
   const [investment, setInvestment] = useState(1000);
   const [botActive, setBotActive] = useState(false);
@@ -143,10 +144,15 @@ function AutoTrader() {
     },
   };
 
-  const hotCoins = coins.map((c) => ({
-    name: c,
-    change: ((Math.random() - 0.5) * 20).toFixed(2),
-  }));
+  const hotCoins = useMemo(
+    () =>
+      COINS.map((c, idx) => {
+        const base = c.charCodeAt(0) + c.charCodeAt(c.length - 1) + idx * 7;
+        const drift = ((base % 200) - 100) / 10;
+        return { name: c, change: drift.toFixed(2) };
+      }),
+    []
+  );
 
   return (
     <div className="mt-1 space-y-6">
@@ -191,7 +197,7 @@ function AutoTrader() {
             onChange={(e) => setSelectedCoin(e.target.value)}
             className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4F6EF7]"
           >
-            {coins.map((c) => (
+            {COINS.map((c) => (
               <option key={c} value={c}>
                 {c}
               </option>

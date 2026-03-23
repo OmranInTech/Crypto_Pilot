@@ -1,14 +1,43 @@
 // src/redux/authSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import API from "../services/api";
+import axios from "axios";
 
 interface AuthState {
-  user: any | null;
+  user: { username?: string; email?: string } | null;
   access_token: string | null;
   refresh_token: string | null;
   loading: boolean;
-  error: any | null;
+  error: string | null;
 }
+
+interface SignupPayload {
+  name?: string;
+  username?: string;
+  email: string;
+  password: string;
+  password2: string;
+}
+
+interface LoginPayload {
+  email?: string;
+  username?: string;
+  password: string;
+}
+
+interface AuthResponse {
+  user: { username?: string; email?: string };
+  refresh: string;
+  access: string;
+}
+
+const extractErrorMessage = (err: unknown): string => {
+  if (axios.isAxiosError(err) && err.response?.data) {
+    const data = err.response.data as { detail?: string; message?: string };
+    return data.detail || data.message || "Something went wrong";
+  }
+  return "Something went wrong";
+};
 
 const initialState: AuthState = {
   user: null,
@@ -21,12 +50,16 @@ const initialState: AuthState = {
 // Signup Thunk
 export const signupUser = createAsyncThunk(
   "auth/signupUser",
-  async (userData: any, { rejectWithValue }) => {
+  async (userData: SignupPayload, { rejectWithValue }) => {
     try {
-      const res = await API.post("users/signup/", userData);
-      return res.data; // { access, refresh, user }
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data || "Something went wrong");
+      const payload = {
+        ...userData,
+        username: userData.username ?? userData.name,
+      };
+      const res = await API.post<AuthResponse>("users/signup/", payload);
+      return res.data;
+    } catch (err: unknown) {
+      return rejectWithValue(extractErrorMessage(err));
     }
   }
 );
@@ -34,12 +67,16 @@ export const signupUser = createAsyncThunk(
 // Login Thunk
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
-  async (userData: any, { rejectWithValue }) => {
+  async (userData: LoginPayload, { rejectWithValue }) => {
     try {
-      const res = await API.post("users/login/", userData);
+      const payload = {
+        ...userData,
+        username: userData.username ?? userData.email,
+      };
+      const res = await API.post<AuthResponse>("users/login/", payload);
       return res.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data || "Something went wrong");
+    } catch (err: unknown) {
+      return rejectWithValue(extractErrorMessage(err));
     }
   }
 );
@@ -71,7 +108,10 @@ const authSlice = createSlice({
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error =
+          typeof action.payload === "string"
+            ? action.payload
+            : "Signup failed";
       })
       // Login
       .addCase(loginUser.pending, (state) => { state.loading = true; state.error = null; })
@@ -85,7 +125,8 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error =
+          typeof action.payload === "string" ? action.payload : "Login failed";
       });
   },
 });

@@ -1,5 +1,6 @@
 // File: src/pages/SignUp.tsx
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useState } from "react";
+import type { FormEvent, ChangeEvent } from "react";
 import { motion } from "framer-motion";
 import { useAppDispatch } from "../redux/hooks";
 import { signupUser } from "../redux/authSlice";
@@ -24,6 +25,8 @@ const SignUp: React.FC = () => {
   });
 
   const [error, setError] = useState<string>("");
+  const getMessage = (err: unknown) =>
+    err instanceof Error ? err.message : "Signup failed";
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -50,8 +53,8 @@ const SignUp: React.FC = () => {
 
       console.log("Signup success:", result);
       navigate("/signin"); // redirect after successful signup
-    } catch (err: any) {
-      setError(err.detail || "Signup failed");
+    } catch (err: unknown) {
+      setError(getMessage(err));
     }
   };
 

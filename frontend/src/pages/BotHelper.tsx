@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import { motion } from "framer-motion";
 import {
@@ -38,7 +38,6 @@ function BotHelper() {
   const [priceData, setPriceData] = useState([
     45000, 45200, 45100, 45300, 45500, 45400, 45600,
   ]);
-  const [signal, setSignal] = useState(""); // Buy / Sell / Hold
   const [portfolio, setPortfolio] = useState<{ [key: string]: number }>({
     BTC: 0,
     USD: 10000,
@@ -75,8 +74,8 @@ function BotHelper() {
     return () => window.clearInterval(interval);
   }, [selectedCoin, timeframe]);
 
-  // Simple signal generator influenced by strategy + ML model
-  useEffect(() => {
+  // Compute helper signal from current data (no side-effect state update)
+  const signal = useMemo(() => {
     const lastPrice = priceData[priceData.length - 1];
     const prevPrice = priceData[priceData.length - 2] || lastPrice;
     const momentum = lastPrice - prevPrice;
@@ -89,10 +88,10 @@ function BotHelper() {
     const thresholdUp = 1.01 - bias * 0.02;
     const thresholdDown = 0.99 + bias * 0.02;
 
-    if (lastPrice > prevPrice * thresholdUp && momentum > 0) setSignal("SELL");
+    if (lastPrice > prevPrice * thresholdUp && momentum > 0) return "SELL";
     else if (lastPrice < prevPrice * thresholdDown && momentum < 0)
-      setSignal("BUY");
-    else setSignal("HOLD");
+      return "BUY";
+    return "HOLD";
   }, [priceData, strategy, mlModel]);
 
   const handleBuy = () => {

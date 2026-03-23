@@ -1,5 +1,6 @@
 // File: src/pages/SignIn.tsx
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useState } from "react";
+import type { FormEvent, ChangeEvent } from "react";
 import { motion } from "framer-motion";
 import { useAppDispatch } from "../redux/hooks";
 import { loginUser } from "../redux/authSlice";
@@ -12,6 +13,8 @@ const SignIn: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const getMessage = (err: unknown) =>
+    err instanceof Error ? err.message : "Login failed";
 
   const handleSignIn = async (e: FormEvent) => {
     e.preventDefault();
@@ -24,8 +27,8 @@ const SignIn: React.FC = () => {
       console.log("Login success:", result);
       // Redirect user after login
       navigate("/dashboard"); // replace with your private route
-    } catch (err: any) {
-      setError(err.detail || "Login failed");
+    } catch (err: unknown) {
+      setError(getMessage(err));
     }
   };
 

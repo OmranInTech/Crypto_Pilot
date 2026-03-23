@@ -3,11 +3,7 @@ import { motion } from "framer-motion";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 16 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.45, delay: 0.1 + i * 0.05, ease: "easeOut" },
-  }),
+  visible: { opacity: 1, y: 0, transition: { duration: 0.45 } },
 };
 
 function Wallet() {

@@ -24,11 +24,7 @@ ChartJS.register(
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 16 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.45, delay: 0.1 + i * 0.05, ease: "easeOut" },
-  }),
+  visible: { opacity: 1, y: 0, transition: { duration: 0.45 } },
 };
 
 function TrendingCoins() {
@@ -58,7 +54,10 @@ function TrendingCoins() {
     elements: { point: { radius: 0 } },
   };
 
-  const pieOptions = { responsive: true, plugins: { legend: { position: "bottom" } } };
+  const pieOptions = {
+    responsive: true,
+    plugins: { legend: { position: "bottom" as const } },
+  };
 
   const news = [
     { title: "Bitcoin Hits New Weekly High", time: "2h ago" },
