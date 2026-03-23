@@ -1,18 +1,33 @@
+// File: src/pages/SignIn.tsx
 import { useState, FormEvent, ChangeEvent } from "react";
 import { motion } from "framer-motion";
+import { useAppDispatch } from "../redux/hooks";
+import { loginUser } from "../redux/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const SignIn: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
-  const handleSignIn = (e: FormEvent) => {
+  const handleSignIn = async (e: FormEvent) => {
     e.preventDefault();
-    alert(`Signing in with ${email}`);
-    // Implement real auth logic here
-  };
+    setError("");
+    try {
+      const result = await dispatch(
+        loginUser({ email, password })
+      ).unwrap();
 
-  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
-  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
+      console.log("Login success:", result);
+      // Redirect user after login
+      navigate("/dashboard"); // replace with your private route
+    } catch (err: any) {
+      setError(err.detail || "Login failed");
+    }
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#F3F6F9] p-6">
@@ -26,6 +41,10 @@ const SignIn: React.FC = () => {
           Sign In
         </h1>
 
+        {error && (
+          <p className="mb-4 text-center text-red-500 font-medium">{error}</p>
+        )}
+
         <form onSubmit={handleSignIn} className="space-y-4">
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -34,7 +53,7 @@ const SignIn: React.FC = () => {
             <input
               type="email"
               value={email}
-              onChange={handleEmailChange}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />
@@ -47,7 +66,7 @@ const SignIn: React.FC = () => {
             <input
               type="password"
               value={password}
-              onChange={handlePasswordChange}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
             />

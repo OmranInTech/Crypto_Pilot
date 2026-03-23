@@ -1,4 +1,4 @@
-
+// File: src/App.tsx
 import { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -15,6 +15,7 @@ import Settings from "./pages/Settings";
 
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -22,60 +23,54 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Auth Pages */}
+        {/* Public routes */}
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
 
-        {/* Dashboard Layout */}
+        {/* Protected routes */}
         <Route
           path="/*"
           element={
-            <div className="flex min-h-screen bg-[#F3F6F9] text-slate-900">
-              {/* Sidebar */}
-              <Sidebar
-                isOpen={mobileMenuOpen}
-                onClose={() => setMobileMenuOpen(false)}
-              />
-
-              {/* Main content column (offset from fixed sidebar by 2px) */}
-              <div className="flex flex-1 flex-col md:ml-[98px]">
-                <Navbar
-                  isMobileMenuOpen={mobileMenuOpen}
-                  onMobileMenuToggle={() =>
-                    setMobileMenuOpen((open) => !open)
-                  }
+            <PrivateRoute>
+              <div className="flex min-h-screen bg-[#F3F6F9] text-slate-900">
+                <Sidebar
+                  isOpen={mobileMenuOpen}
+                  onClose={() => setMobileMenuOpen(false)}
                 />
 
-                <main className="flex-1 pt-16 px-4 pb-4 md:px-8 md:pb-6 transition-all duration-300">
-                  <Routes>
-                    <Route
-                      path="/"
-                      element={<Navigate to="/dashboard" replace />}
-                    />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route
-                      path="/trending-coins"
-                      element={<TrendingCoins />}
-                    />
-                    <Route path="/bot-helper" element={<BotHelper />} />
-                    <Route path="/auto-trader" element={<AutoTrader />} />
-                    <Route path="/wallet" element={<Wallet />} />
-                    <Route path="/settings" element={<Settings />} />
+                <div className="flex flex-1 flex-col md:ml-[98px]">
+                  <Navbar
+                    isMobileMenuOpen={mobileMenuOpen}
+                    onMobileMenuToggle={() =>
+                      setMobileMenuOpen((open) => !open)
+                    }
+                  />
 
-                    <Route
-                      path="*"
-                      element={
-                        <div className="p-8 text-center text-gray-500">
-                          Page Not Found
-                        </div>
-                      }
-                    />
-                  </Routes>
-                </main>
+                  <main className="flex-1 pt-16 px-4 pb-4 md:px-8 md:pb-6 transition-all duration-300">
+                    <Routes>
+                      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/trending-coins" element={<TrendingCoins />} />
+                      <Route path="/bot-helper" element={<BotHelper />} />
+                      <Route path="/auto-trader" element={<AutoTrader />} />
+                      <Route path="/wallet" element={<Wallet />} />
+                      <Route path="/settings" element={<Settings />} />
 
-                <Footer />
+                      <Route
+                        path="*"
+                        element={
+                          <div className="p-8 text-center text-gray-500">
+                            Page Not Found
+                          </div>
+                        }
+                      />
+                    </Routes>
+                  </main>
+
+                  <Footer />
+                </div>
               </div>
-            </div>
+            </PrivateRoute>
           }
         />
       </Routes>
@@ -84,4 +79,3 @@ function App() {
 }
 
 export default App;
-

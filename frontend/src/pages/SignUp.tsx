@@ -1,28 +1,58 @@
+// File: src/pages/SignUp.tsx
 import { useState, FormEvent, ChangeEvent } from "react";
 import { motion } from "framer-motion";
+import { useAppDispatch } from "../redux/hooks";
+import { signupUser } from "../redux/authSlice";
+import { useNavigate } from "react-router-dom";
 
 interface SignUpForm {
   name: string;
   email: string;
   password: string;
+  password2: string; // confirmation password
 }
 
 const SignUp: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const [form, setForm] = useState<SignUpForm>({
     name: "",
     email: "",
     password: "",
+    password2: "",
   });
+
+  const [error, setError] = useState<string>("");
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSignUp = (e: FormEvent) => {
+  const handleSignUp = async (e: FormEvent) => {
     e.preventDefault();
-    alert(`Account created for ${form.name} (${form.email})`);
-    // Implement real signup logic here
+    if (form.password !== form.password2) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setError("");
+    try {
+      const result = await dispatch(
+        signupUser({
+          name: form.name,
+          email: form.email,
+          password: form.password,
+          password2: form.password2,
+        })
+      ).unwrap();
+
+      console.log("Signup success:", result);
+      navigate("/signin"); // redirect after successful signup
+    } catch (err: any) {
+      setError(err.detail || "Signup failed");
+    }
   };
 
   return (
@@ -36,6 +66,10 @@ const SignUp: React.FC = () => {
         <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">
           Sign Up
         </h1>
+
+        {error && (
+          <p className="mb-4 text-center text-red-500 font-medium">{error}</p>
+        )}
 
         <form onSubmit={handleSignUp} className="space-y-4">
           <div>
@@ -74,6 +108,20 @@ const SignUp: React.FC = () => {
               type="password"
               name="password"
               value={form.password}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              name="password2"
+              value={form.password2}
               onChange={handleChange}
               className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
