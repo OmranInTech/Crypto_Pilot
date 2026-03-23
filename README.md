@@ -30,7 +30,7 @@ Track your assets, analyze crypto trends, and automate trading strategies with a
 - User account management and settings
 - SignIn & SignUp pages
 - Responsive design using Tailwind CSS
-- Smooth animations with Framer Motion
+
 
 ---
 
