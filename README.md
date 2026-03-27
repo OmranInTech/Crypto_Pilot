@@ -24,7 +24,7 @@ Track your assets, analyze crypto trends, and automate trading strategies with a
 ## 📌 Features
 - Real-time candlestick charts for BTC, ETH, and more
 - MACD, RSI, and volume indicators
-- Hot coins heatmap (top 20 coins)
+- Hot coins heatmap 
 - Wallet management and transaction history
 - Auto trader bot simulation
 - User account management and settings
