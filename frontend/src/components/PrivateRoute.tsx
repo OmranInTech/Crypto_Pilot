@@ -1,19 +1,12 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAppSelector } from "../redux/hooks";
 
-interface PrivateRouteProps {
-  children: React.ReactNode;
-}
-
-const PrivateRoute = ({ children }: PrivateRouteProps) => {
+const PrivateRoute = () => {
   const access_token = useAppSelector((state) => state.auth.access_token);
 
-  if (!access_token) {
-    // User not logged in, redirect to signin page
-    return <Navigate to="/signin" replace />;
-  }
-
-  return <>{children}</>;
+  // If token exists, render the child routes (via Outlet)
+  // Otherwise, kick them to signin
+  return access_token ? <Outlet /> : <Navigate to="/signin" replace />;
 };
 
 export default PrivateRoute;
