@@ -7,23 +7,27 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# =========================
+# SECURITY
+# =========================
 SECRET_KEY = os.environ.get(
     "SECRET_KEY",
-    "django-insecure-(83ej(a^rz5$$uzcei@6ej!y*20lq4x0z^3+b+03f*fcy7qydy"
+    "django-insecure-(83ej(a^rz5$$uzcei@6ej*demo-key)"
 )
 
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = [
-    h.strip() for h in os.environ.get(
+    h.strip()
+    for h in os.environ.get(
         "ALLOWED_HOSTS",
-        "localhost,0.0.0.0,127.0.0.1"
+        "localhost,127.0.0.1,0.0.0.0"
     ).split(",")
     if h.strip()
 ]
 
 # =========================
-# INSTALLED APPS
+# APPLICATIONS
 # =========================
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -33,12 +37,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # DRF
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt',
 
+    # Apps
     'users',
     'Crypto_Price',
+
+    # Background jobs
+    'django_celery_beat',
+
+    # WebSockets
+    'channels',
 ]
 
 # =========================
@@ -47,20 +59,35 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# =========================
+# CORS
+# =========================
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
 
+# =========================
+# URLS / WSGI / ASGI
+# =========================
 ROOT_URLCONF = 'config.urls'
 
+WSGI_APPLICATION = 'config.wsgi.application'
+ASGI_APPLICATION = 'config.asgi.application'
+
+# =========================
+# TEMPLATES
+# =========================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -76,10 +103,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
-
 # =========================
-# DATABASE (PostgreSQL)
+# DATABASE
 # =========================
 DATABASES = {
     'default': {
@@ -93,7 +118,7 @@ DATABASES = {
 }
 
 # =========================
-# AUTH
+# PASSWORD VALIDATION
 # =========================
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -110,6 +135,9 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
+# =========================
+# STATIC FILES
+# =========================
 STATIC_URL = 'static/'
 
 # =========================
@@ -125,7 +153,7 @@ REST_FRAMEWORK = {
 }
 
 # =========================
-# REDIS CACHE (IMPORTANT)
+# REDIS CACHE (CACHE LAYER)
 # =========================
 CACHES = {
     "default": {
@@ -138,7 +166,7 @@ CACHES = {
 }
 
 # =========================
-# CELERY CONFIG (CRITICAL)
+# CELERY CONFIG
 # =========================
 CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
 CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
@@ -146,3 +174,18 @@ CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
+
+CELERY_TIMEZONE = "UTC"
+CELERY_ENABLE_UTC = True
+
+# =========================
+# CHANNELS (WEBSOCKETS)
+# =========================
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}

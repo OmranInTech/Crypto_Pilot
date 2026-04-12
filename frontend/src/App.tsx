@@ -59,27 +59,26 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
 
         {/* --- Protected Routes --- */}
-        <Route element={<PrivateRoute />}>
-          <Route 
-            element={
-              <ProtectedLayout 
-                mobileMenuOpen={mobileMenuOpen} 
-                setMobileMenuOpen={setMobileMenuOpen} 
-              />
-            }
-          >
-            {/* These paths will render inside the ProtectedLayout's <Outlet /> */}
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/trending-coins" element={<TrendingCoins />} />
-            <Route path="/bot-helper" element={<BotHelper />} />
-            <Route path="/auto-trader" element={<AutoTrader />} />
-            <Route path="/wallet" element={<Wallet />} />
-            <Route path="/settings" element={<Settings />} />
-            
-            {/* Redirect root to dashboard */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          </Route>
+        <Route 
+          element={
+            <ProtectedLayout 
+              mobileMenuOpen={mobileMenuOpen} 
+              setMobileMenuOpen={setMobileMenuOpen} 
+            />
+          }
+        >
+          {/* These paths will render inside the ProtectedLayout's <Outlet /> */}
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/trending-coins" element={<TrendingCoins />} />
+          <Route path="/bot-helper" element={<BotHelper />} />
+          <Route path="/auto-trader" element={<AutoTrader />} />
+          <Route path="/wallet" element={<Wallet />} />
+          <Route path="/settings" element={<Settings />} />
+          
+          {/* Redirect root to trending-coins */}
+          <Route path="/" element={<Navigate to="/trending-coins" replace />} />
         </Route>
+
 
         {/* --- Global 404 --- */}
         <Route path="*" element={<div className="p-20 text-center font-bold">404 - Page Not Found</div>} />

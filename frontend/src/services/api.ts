@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8000/api/users/';
+const BASE_URL = 'http://127.0.0.1:8000/api/users/';
 
 // PUBLIC: Use for Signup and Login
 export const publicAPI = axios.create({

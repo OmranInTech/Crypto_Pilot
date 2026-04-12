@@ -1,33 +1,41 @@
 from celery import shared_task
-import requests
 from django.core.cache import cache
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+import requests
+
 
 @shared_task
 def update_crypto_prices():
-    try:
-        url = "https://api.coingecko.com/api/v3/simple/price"
 
-        params = {
-            "ids": "bitcoin,ethereum,dogecoin,solana",
-            "vs_currencies": "usd"
+    url = "https://api.coingecko.com/api/v3/simple/price"
+    params = {
+        "ids": "bitcoin,ethereum,dogecoin,solana",
+        "vs_currencies": "usd"
+    }
+
+    response = requests.get(url, params=params)
+    data = response.json()
+
+    prices = {
+        "BTC": data["bitcoin"]["usd"],
+        "ETH": data["ethereum"]["usd"],
+        "DOGE": data["dogecoin"]["usd"],
+        "SOL": data["solana"]["usd"],
+    }
+
+    # 1. Save to Redis cache
+    cache.set("crypto_prices", prices, timeout=30)
+
+    # 2. Send to WebSocket group
+    channel_layer = get_channel_layer()
+
+    async_to_sync(channel_layer.group_send)(
+        "crypto_prices",
+        {
+            "type": "crypto_update",
+            "data": prices
         }
+    )
 
-        response = requests.get(url, params=params)
-        data = response.json()
-
-        result = {
-            "BTC": data.get("bitcoin", {}).get("usd"),
-            "ETH": data.get("ethereum", {}).get("usd"),
-            "DOGE": data.get("dogecoin", {}).get("usd"),
-            "SOL": data.get("solana", {}).get("usd"),
-        }
-
-        print("DEBUG RESULT:", result)  # 👈 important
-
-        cache.set("crypto_prices", result, 60)
-
-        return result
-
-    except Exception as e:
-        print("ERROR:", str(e))
-        return None
+    return prices
