@@ -1,6 +1,6 @@
 # CryptoPilot
 
-A modern, full-stack cryptocurrency trading and analytics platform under development, designed to track assets, analyze crypto trends, and simulate automated trading strategies with a responsive interface.
+A modern, full-stack cryptocurrency trading and analytics platform under development , designed to track assets, analyze crypto trends, and simulate automated trading strategies with a responsive interface.
 
 ---
 
