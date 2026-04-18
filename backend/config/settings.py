@@ -57,10 +57,11 @@ INSTALLED_APPS = [
 # MIDDLEWARE
 # =========================
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+
     'django.middleware.common.CommonMiddleware',
 
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -71,11 +72,13 @@ MIDDLEWARE = [
 ]
 
 # =========================
-# CORS
+# CORS (FRONTEND)
 # =========================
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 # =========================
 # URLS / WSGI / ASGI
@@ -188,4 +191,13 @@ CHANNEL_LAYERS = {
             "hosts": [("127.0.0.1", 6379)],
         },
     },
+}
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    "update-prices-every-5-seconds": {
+        "task": "Crypto_Price.tasks.update_crypto_prices",
+        "schedule": 5.0,
+    }
 }

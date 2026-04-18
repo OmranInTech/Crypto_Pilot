@@ -1,26 +1,42 @@
-import axios from 'axios';
+import axios from "axios";
 
-const BASE_URL = 'http://127.0.0.1:8000/api/users/';
+const BASE_URL = "http://127.0.0.1:8000/api/users/";
 
-// PUBLIC: Use for Signup and Login
+// =========================
+// PUBLIC API (Login / Signup)
+// =========================
 export const publicAPI = axios.create({
-    baseURL: BASE_URL,
-    headers: { 'Content-Type': 'application/json' }
+  baseURL: BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// PRIVATE: Use for all protected data (Dashboard, Wallet, etc.)
+// =========================
+// PRIVATE API (Protected Routes)
+// =========================
 const API = axios.create({
-    baseURL: BASE_URL,
-    headers: { 'Content-Type': 'application/json' }
+  baseURL: BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// Automatically attach the Bearer token to every private request
-API.interceptors.request.use((config) => {
-    const token = localStorage.getItem('access_token');
+// =========================
+// INTERCEPTOR (Attach JWT Token)
+// =========================
+API.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("access_token");
+
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+      config.headers = config.headers ?? {};
+      config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
-});
+  },
+  (error) => Promise.reject(error)
+);
 
 export default API;

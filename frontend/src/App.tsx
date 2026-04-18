@@ -14,7 +14,7 @@ import Settings from "./pages/Settings";
 
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
-import PrivateRoute from "./components/PrivateRoute";
+
 
 // 1. Create a Layout Wrapper component for Protected Routes
 const ProtectedLayout = ({ 
