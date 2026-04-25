@@ -46,9 +46,6 @@ INSTALLED_APPS = [
     'users',
     'Crypto_Price',
 
-    # Background jobs
-    'django_celery_beat',
-
     # WebSockets
     'channels',
 ]
@@ -72,7 +69,7 @@ MIDDLEWARE = [
 ]
 
 # =========================
-# CORS (FRONTEND)
+# CORS
 # =========================
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
@@ -81,7 +78,7 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 # =========================
-# URLS / WSGI / ASGI
+# URLS / ASGI / WSGI
 # =========================
 ROOT_URLCONF = 'config.urls'
 
@@ -156,7 +153,7 @@ REST_FRAMEWORK = {
 }
 
 # =========================
-# REDIS CACHE (CACHE LAYER)
+# REDIS CACHE
 # =========================
 CACHES = {
     "default": {
@@ -169,19 +166,6 @@ CACHES = {
 }
 
 # =========================
-# CELERY CONFIG
-# =========================
-CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
-
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_SERIALIZER = "json"
-
-CELERY_TIMEZONE = "UTC"
-CELERY_ENABLE_UTC = True
-
-# =========================
 # CHANNELS (WEBSOCKETS)
 # =========================
 CHANNEL_LAYERS = {
@@ -191,13 +175,4 @@ CHANNEL_LAYERS = {
             "hosts": [("127.0.0.1", 6379)],
         },
     },
-}
-
-from celery.schedules import crontab
-
-CELERY_BEAT_SCHEDULE = {
-    "update-prices-every-5-seconds": {
-        "task": "Crypto_Price.tasks.update_crypto_prices",
-        "schedule": 5.0,
-    }
 }

@@ -1,31 +1,107 @@
-import random
+import requests
 from celery import shared_task
 from django.core.cache import cache
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
 
-@shared_task
-def update_crypto_prices():
-    data = {
-        "BTC": round(random.uniform(40000, 50000), 2),
-        "ETH": round(random.uniform(3000, 3500), 2),
-        "DOGE": round(random.uniform(0.10, 0.25), 4),
-        "SOL": round(random.uniform(120, 160), 2),
+# =========================
+# FETCH COINGECKO PRICES (SAFE)
+# =========================
+def fetch_prices():
+    url = "https://api.coingecko.com/api/v3/coins/markets"
+
+    params = {
+        "vs_currency": "usd",
+        "ids": "bitcoin,ethereum,dogecoin,solana",
+        "order": "market_cap_desc",
+        "per_page": 4,
+        "page": 1,
+        "sparkline": "false"
     }
 
-    # 1. Save in cache
-    cache.set("crypto_prices", data, timeout=10)
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        data = response.json()
 
-    # 2. Send to WebSocket group
+        # =========================
+        # RATE LIMIT / ERROR CHECK
+        # =========================
+        if isinstance(data, dict) and data.get("status"):
+            print("❌ API ERROR:", data)
+            return {
+                "BTC": 0,
+                "ETH": 0,
+                "DOGE": 0,
+                "SOL": 0,
+            }
+
+        if not isinstance(data, list):
+            print("❌ Invalid response:", data)
+            return {
+                "BTC": 0,
+                "ETH": 0,
+                "DOGE": 0,
+                "SOL": 0,
+            }
+
+        prices = {
+            "BTC": 0,
+            "ETH": 0,
+            "DOGE": 0,
+            "SOL": 0,
+        }
+
+        for coin in data:
+            if not isinstance(coin, dict):
+                continue
+
+            coin_id = coin.get("id")
+            price = coin.get("current_price")
+
+            if coin_id == "bitcoin":
+                prices["BTC"] = price
+            elif coin_id == "ethereum":
+                prices["ETH"] = price
+            elif coin_id == "dogecoin":
+                prices["DOGE"] = price
+            elif coin_id == "solana":
+                prices["SOL"] = price
+
+        return prices
+
+    except Exception as e:
+        print("❌ FETCH ERROR:", e)
+        return {
+            "BTC": 0,
+            "ETH": 0,
+            "DOGE": 0,
+            "SOL": 0,
+        }
+
+
+# =========================
+# CELERY TASK
+# =========================
+@shared_task
+def update_crypto_prices():
+
+    prices = fetch_prices()
+
+    # Save cache
+    cache.set("crypto_prices", prices, timeout=10)
+
+    # Send to WebSocket
     channel_layer = get_channel_layer()
 
     async_to_sync(channel_layer.group_send)(
         "crypto_prices",
         {
             "type": "crypto_update",
-            "data": data
+            "data": prices
         }
     )
 
-    return data
+    print("🚀 SENT TO FRONTEND:", prices)
+
+    return prices
