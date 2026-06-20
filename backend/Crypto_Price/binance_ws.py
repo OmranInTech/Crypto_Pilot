@@ -24,10 +24,9 @@ async def binance_stream():
             symbol = payload["s"].replace("USDT", "")
             price = float(payload["p"])
 
-            update = {
-                symbol: price
-            }
+            update = {symbol: price}
 
+            # ✔ DIRECT ASYNC CALL (NO AsyncToSync)
             await channel_layer.group_send(
                 "crypto_prices",
                 {

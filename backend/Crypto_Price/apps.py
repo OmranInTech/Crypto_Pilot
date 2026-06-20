@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 import threading
+import os
 
 
 class CryptoPriceConfig(AppConfig):
@@ -7,16 +8,18 @@ class CryptoPriceConfig(AppConfig):
     name = 'Crypto_Price'
 
     def ready(self):
-        # Prevent duplicate threads (IMPORTANT FIX)
-        import os
-
+        # Prevent duplicate execution in dev server
         if os.environ.get("RUN_MAIN") != "true":
             return
 
-        from .binance_runner import start_binance_stream
+        try:
+            from .binance_ws import binance_stream
 
-        thread = threading.Thread(
-            target=start_binance_stream,
-            daemon=True
-        )
-        thread.start()
+            thread = threading.Thread(
+                target=binance_stream,
+                daemon=True
+            )
+            thread.start()
+
+        except Exception as e:
+            print("❌ Binance thread failed:", e)

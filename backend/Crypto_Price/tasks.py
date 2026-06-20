@@ -1,8 +1,11 @@
 import requests
+import logging
 from celery import shared_task
 from django.core.cache import cache
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+
+logger = logging.getLogger(__name__)
 
 
 # =========================
@@ -20,37 +23,25 @@ def fetch_prices():
         "sparkline": "false"
     }
 
+    fallback = {
+        "BTC": None,
+        "ETH": None,
+        "DOGE": None,
+        "SOL": None,
+        "status": "API unavailable"
+    }
+
     try:
-        response = requests.get(url, params=params, timeout=10)
+        response = requests.get(url, params=params, timeout=15)
+        response.raise_for_status()
+
         data = response.json()
 
-        # =========================
-        # RATE LIMIT / ERROR CHECK
-        # =========================
-        if isinstance(data, dict) and data.get("status"):
-            print("❌ API ERROR:", data)
-            return {
-                "BTC": 0,
-                "ETH": 0,
-                "DOGE": 0,
-                "SOL": 0,
-            }
-
         if not isinstance(data, list):
-            print("❌ Invalid response:", data)
-            return {
-                "BTC": 0,
-                "ETH": 0,
-                "DOGE": 0,
-                "SOL": 0,
-            }
+            logger.warning("Invalid API response: %s", data)
+            return fallback
 
-        prices = {
-            "BTC": 0,
-            "ETH": 0,
-            "DOGE": 0,
-            "SOL": 0,
-        }
+        prices = {"BTC": None, "ETH": None, "DOGE": None, "SOL": None}
 
         for coin in data:
             if not isinstance(coin, dict):
@@ -70,14 +61,9 @@ def fetch_prices():
 
         return prices
 
-    except Exception as e:
-        print("❌ FETCH ERROR:", e)
-        return {
-            "BTC": 0,
-            "ETH": 0,
-            "DOGE": 0,
-            "SOL": 0,
-        }
+    except requests.exceptions.RequestException as e:
+        logger.error("CoinGecko API error: %s", e)
+        return fallback
 
 
 # =========================
@@ -88,10 +74,8 @@ def update_crypto_prices():
 
     prices = fetch_prices()
 
-    # Save cache
     cache.set("crypto_prices", prices, timeout=10)
 
-    # Send to WebSocket
     channel_layer = get_channel_layer()
 
     async_to_sync(channel_layer.group_send)(
@@ -102,6 +86,6 @@ def update_crypto_prices():
         }
     )
 
-    print("🚀 SENT TO FRONTEND:", prices)
+    logger.info("Sent to frontend: %s", prices)
 
     return prices

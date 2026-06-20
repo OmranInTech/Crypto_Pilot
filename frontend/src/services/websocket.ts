@@ -5,8 +5,7 @@ export function createCryptoSocket(
   let ws: WebSocket | null = null;
 
   const connect = () => {
-    ws = new WebSocket("ws://127.0.0.1:8000/ws/crypto/");
-
+   ws = new WebSocket("ws://127.0.0.1:8001/ws/crypto/");
     ws.onopen = () => {
       console.log("🚀 Connected");
       onStatus(true);
