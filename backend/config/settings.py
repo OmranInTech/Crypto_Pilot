@@ -184,3 +184,7 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 
 ASGI_APPLICATION = "config.asgi.application"
+
+
+from Crypto_Price.security_modes import SECURE_MODE
+SECURE_MODE = SECURE_MODE
