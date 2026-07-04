@@ -188,3 +188,10 @@ ASGI_APPLICATION = "config.asgi.application"
 
 from Crypto_Price.security_modes import SECURE_MODE
 SECURE_MODE = SECURE_MODE
+
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "0.0.0.0",
+    "localhost.localdomain"
+]
