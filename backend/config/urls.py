@@ -16,4 +16,6 @@ urlpatterns = [
     #attack simulation to show jwt tokens
     path("api/token/", TokenObtainPairView.as_view()),
     path("api/token/refresh/", TokenRefreshView.as_view()),
+
+    
 ]

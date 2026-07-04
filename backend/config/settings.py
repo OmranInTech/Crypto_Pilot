@@ -17,14 +17,7 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = [
-    h.strip()
-    for h in os.environ.get(
-        "ALLOWED_HOSTS",
-        "localhost,127.0.0.1,0.0.0.0"
-    ).split(",")
-    if h.strip()
-]
+
 
 # =========================
 # APPLICATIONS
@@ -150,6 +143,20 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
     ),
+
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.AnonRateThrottle",
+    ],
+
+    "DEFAULT_THROTTLE_RATES": {
+        "user": "10/min",
+        "anon": "5/min",
+
+        # ✅ ADD THESE (IMPORTANT)
+        "burst": "5/min",
+        "anon_burst": "3/min",
+    }
 }
 
 # =========================
