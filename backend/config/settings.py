@@ -136,12 +136,28 @@ STATIC_URL = 'static/'
 # =========================
 # REST FRAMEWORK
 # =========================
+
+#no throttling (baseline testing mode)
+# REST_FRAMEWORK = {
+#     "DEFAULT_AUTHENTICATION_CLASSES": (
+#         "rest_framework_simplejwt.authentication.JWTAuthentication",
+#     ),
+
+#     # No throttling (baseline testing mode)
+#     "DEFAULT_PERMISSION_CLASSES": (
+#         "rest_framework.permissions.AllowAny",
+#     ),
+# }
+
+#protection mode (rate limiting enabled)
+
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny',
+
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.AllowAny",
     ),
 
     "DEFAULT_THROTTLE_CLASSES": [
@@ -150,13 +166,9 @@ REST_FRAMEWORK = {
     ],
 
     "DEFAULT_THROTTLE_RATES": {
-        "user": "10/min",
-        "anon": "5/min",
-
-        # ✅ ADD THESE (IMPORTANT)
-        "burst": "5/min",
-        "anon_burst": "3/min",
-    }
+        "user": "10/second",
+        "anon": "10/second",
+    },
 }
 
 # =========================
